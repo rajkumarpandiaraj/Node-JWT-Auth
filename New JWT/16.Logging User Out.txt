@@ -1,0 +1,14 @@
+                                        16.Logging User out
+
+
+To logout user we have to delete the jwt cookie
+To do That  
+    --> create a logout button 
+    --> make a post request to the backend
+    --> we can't delete the cook manually so we change the jwt cookie value to ''[empty string] with small expiry value
+
+    In controller/authController/js
+        module.exports.logout_get = (req, res) => {
+        res.cookie('jwt', '', { maxAge: 1 });
+        res.redirect('/');
+    }

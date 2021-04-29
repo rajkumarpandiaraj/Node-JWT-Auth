@@ -1,0 +1,63 @@
+                        15.Protecting Routes
+
+Here we are going to do,
+    1.going to protect some routes by using middleware.
+    2.checks the jwt cokkie comes with the req,
+    3.based on that allows/deny for the protected routes
+
+In middleware/auth.js
+        const jwt = require('jsonwebtoken');
+
+        const requireAuth = (req, res, next) => {
+          const token = req.cookies.jwt;
+
+          // check json web token exists & is verified
+          if (token) {
+              //jwt.verify(token, secret string, callbackFunc)
+            jwt.verify(token, 'net ninja secret', (err, decodedToken) => {
+              if (err) {
+                console.log(err.message);
+                res.redirect('/login');
+              } else {
+                console.log(decodedToken);
+                next();
+              }
+            });
+          } else {
+            res.redirect('/login');
+          }
+        };
+
+        module.exports = { requireAuth };
+
+//////////////////////////////////////////////////////////////
+To protect the smoothie route add the requireAuth middleware
+
+In app.js
+        const express = require('express');
+        const mongoose = require('mongoose');
+        const authRoutes = require('./routes/authRoutes');
+        const cookieParser = require('cookie-parser');
+        const { requireAuth } = require('./middleware/authMiddleware');
+
+        const app = express();
+
+        // middleware
+        app.use(express.static('public'));
+        app.use(express.json());
+        app.use(cookieParser());
+
+        // view engine
+        app.set('view engine', 'ejs');
+
+        // database connection
+        const dbURI = 'mongodb+srv://shaun:test1234@cluster0.del96.mongodb.net/node-auth';
+        mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
+          .then((result) => app.listen(3000))
+          .catch((err) => console.log(err));
+
+        // routes
+        app.get('/', (req, res) => res.render('home'));
+        //protected the smoothies route with requireAuth
+        app.get('/smoothies', requireAuth, (req, res) => res.render('smoothies'));
+        app.use(authRoutes);

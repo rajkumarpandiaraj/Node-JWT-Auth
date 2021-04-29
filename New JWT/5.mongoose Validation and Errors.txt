@@ -1,0 +1,80 @@
+                                5.Mongoose Validation and Error
+
+Setting cutom error message for the different field in Schema
+
+In models/user.js
+    const mongoose = require('mongoose');
+    const {isEmail} = require('validator')
+    const userSchema = new mongoose.Schema({
+      email: {
+        type: String,
+        required: [true, 'Please Enter an Email'], // array second element is the message for that error
+        unique: true,
+        lowercase: true,
+        // validate : [(val)=>{}, 'Please Enter the valid email']
+            // validate checks the values is a valid email or not
+            // arrays first element is the Function takes the user entered value and checks with regEx and returns true || false
+            // based on that error message got prints
+        validate : [isEmail, 'Please Enter the valid email']
+            // npm install validator
+            //isEmail checks the email and returns true || false
+
+      },
+      password: {
+        type: String,
+        required: [true, 'Please Enter an Password'],
+        minlength: [6, "Minimum Password character length is 6" ],
+      }
+    });
+
+    const User = mongoose.model('user', userSchema);
+
+    module.exports = User;
+///////////////////////////////////////////////////////////////////////////
+Sending error message
+In controllers/authController.js
+    //handleErrors
+    const handleErrors = (err) =>{
+        console.log(err.message, err.code) //prints the error message we gave,err.code always undefined,
+                                           //But displays 11000 if there is unique error in email
+        let errors = {email : '', password : ''}
+
+        if(err.code === 11000 ){
+            errors.email = 'Email is already registered'
+            return errors
+        }
+
+        if(err.message.include('user validation failed'){
+            console.log(err) //err contains errors obj, that contains email obj,tat contains path,properties obj, value extra
+                            // lyk that for password too 
+            Object.key(err.errors).forEach({properties} =>{
+                error[properties.path] = properties.message;
+            })
+            return errors
+        }
+    }
+
+
+
+
+  module.exports.signup_post = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.create({ email, password });
+    res.status(201).json(user);
+  }
+  catch(err) {
+      const errors = handleErrors(err)
+    console.log(err);
+    res.status(400).json(error); // sending json error obj as res
+  }
+ 
+}
+
+
+
+
+
+
+    

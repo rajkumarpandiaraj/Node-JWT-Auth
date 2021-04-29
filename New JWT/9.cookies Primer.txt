@@ -1,0 +1,93 @@
+                    9.Cookies
+
+--> Cookies allows to store the data in the user's browser
+--> That data can be any thing like name=Rk, age = 22, isEmployee = true
+
+How it works
+
+    browser -----------------> Server
+                                [create a cookie]
+                            In Server we create the cookie and we can set the expiry time
+                                name = Rk
+
+    --> then that cookie is sent back to browser and that cookie with data[name=Rk] is stored in browser
+    --> after that whenever user made the request we can access the cookie in Server
+
+    Crf stategies !important.....ref google
+////////////////////////////////////////////////////////////////////////////////
+Now we are going to set different routes to set and read Cookies
+
+    In app.js 
+            const express = require('express');
+        const mongoose = require('mongoose');
+
+        const app = express();
+
+        // middleware
+        app.use(express.static('public'));
+
+        // view engine
+        app.set('view engine', 'ejs');
+
+        // database connection
+        const dbURI = 'mongodb+srv://shaun:test1234@cluster0.del96.mongodb.net/node-auth';
+        mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
+          .then((result) => app.listen(3000))
+          .catch((err) => console.log(err));
+
+        // routes
+        app.get('/', (req, res) => res.render('home'));
+        app.get('/smoothies', (req, res) => res.render('smoothies'));
+
+        //Cookies
+        app.get('/set-cookies', (req,res)=>{
+            //if someone comes to this route, we gonna create a cookie and set it to the users browser
+            //to set cookie
+            res.setHeader('set-cookie', 'newUser = true')
+            res.send('you got the cookie')
+        });
+
+        // in user browser, if we go to application tab, we can see  our cookie
+        //there the value and expires column.
+        //you can access the cookie in the console by document.cookie
+        //this is the basic way to set cookie
+
+        //Another way
+        //npm i cookie-parser 
+        const cookieParser = require('cookie-parser')
+        app.user(cookieParser());
+        app.get('/set-cookie', (req,res)=>{
+            //To set cookie
+            res.cookie('newUser', false);
+            //initially newUser is true, now checks for the newUser, if there changes the value, if not creates the new one.
+            
+            //we can set the age of the cookie [age == expiry], by default it is session
+            res.cookie('newUser', false, {maxAge : 1000* 60 *60 *24}); //1day in milliSeconds.
+            //now this cookie will expires after a day only.
+
+            //secure = true, set the cookieonly for the https req only not for http req
+            res.cookie('newUser', false, {maxAge : 1000* 60 *60 *24, secure : true});
+
+            //httpOnly = true, allows us to access the cookie only in req, not in js
+            //normally we can access the cookie in console by document.cookie,
+            //but httpOnly blocks that
+            res.cookie('newUser', false, {maxAge : 1000* 60 *60 *24, httpOnly : true});
+
+            //we should always use HTTPS connection for the authentication purpose in PRODUCTION
+            
+
+        })
+
+
+
+
+        app.get('/read-cookies', (req,res)=>{
+            //we can read the cookie in every controllers
+            const cookies = req.cookies;
+            res.json(cookies)
+
+        });
+
+        
+
+/////////////////////////////////////////////////////////////////////////////////

@@ -1,0 +1,28 @@
+                        10.JWT Theory
+
+1.user login through the browser with email and password and sent it to the server.
+2.In server, that crenditals is check with db, if that is exis,server creates a cookies and sent it to the browser.
+3.Cookies sent with req to th browser, based on that server the page.
+
+
+JSON Web Token
+1.JWT is a encoded long string with three parts, 1.red, 2.Purple and 3.Blue.
+
+1.Red(Header)
+    --> Tells the server what type of signatire is being used[meta data]
+
+2.Purple(Payoad)
+    --> Used to identify the user[eg: contains user id]
+
+3.Blue(Signature)
+    --> Makes the token secure(like a stamp of authenticity)
+
+
+after user login, servercreates jwt by
+
+    by hasing the header and payload together and creates the secret string
+    And adds the signature with the secret string.
+
+After creating the jwt, it sent to the browser as cookie
+
+while receiving the req, server checks the jwt cookie and show/hide the page based on that.

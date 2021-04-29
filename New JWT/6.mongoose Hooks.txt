@@ -1,0 +1,49 @@
+                                        6.Mongoose Hooks
+
+Mongoose Hooks fires the function before/after some event occured like saving the doc to the db,
+removing the doc from the db
+
+In models/user.js
+    const mongoose = require('mongoose');
+    const {isEmail} = require('validator')
+    const userSchema = new mongoose.Schema({
+      email: {
+        type: String,
+        required: [true, 'Please Enter an Email'], // array second element is the message for that error
+        unique: true,
+        lowercase: true,
+        // validate : [(val)=>{}, 'Please Enter the valid email']
+            // validate checks the values is a valid email or not
+            // arrays first element is the Function takes the user entered value and checks with regEx and returns true || false
+            // based on that error message got prints
+        validate : [isEmail, 'Please Enter the valid email']
+            // npm install validator
+            //isEmail checks the email and returns true || false
+
+      },
+      password: {
+        type: String,
+        required: [true, 'Please Enter an Password'],
+        minlength: [6, "Minimum Password character length is 6" ],
+      }
+    });
+
+    //fire a function after the doc saved to the db
+    userSchema.post('save', (doc, next) =>{ //this func got fired after the doc saved to db,[doc is the saved doc]
+        console.log('user doc got saved', doc);
+        next();
+    })
+
+    //fire a function before the doc saved to db
+    userSchema.pre('save', function(){//using func instead of arrow func to access the this keyword[created user Instance]
+       console.log('user doc about to save', this);
+       next();
+    })
+
+    // lyk 'save', we can use remove to fire function after/before removing the doc 
+    //check Mongoose Hooks documentation
+    
+    const User = mongoose.model('user', userSchema);
+
+    module.exports = User;
+    

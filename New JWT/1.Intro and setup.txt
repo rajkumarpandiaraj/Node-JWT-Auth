@@ -1,0 +1,90 @@
+                                    1.Intro and Setup
+
+GitHub : https://github.com/iamshaunjp/node-express-jwt-auth/tree/lesson-1
+
+In this project there is an login and sign up page
+And there is also an smoothie page, that is protected only logged user only see the page.
+
+JWT : 
+    JSON web Tokens are ONE way to implement authentication.
+
+In this project using ejs, express and mongoose as dependencies.
+//////////////////////////////////////////////////////////////////////////////////
+In app.js 
+            const express = require('express');
+        const mongoose = require('mongoose');
+
+        const app = express();
+
+        // middleware
+        app.use(express.static('public'));
+
+        // view engine
+        app.set('view engine', 'ejs');
+
+        // database connection
+        const dbURI = 'mongodb+srv://shaun:test1234@cluster0.del96.mongodb.net/node-auth';
+        mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true })
+          .then((result) => app.listen(3000))
+          .catch((err) => console.log(err));
+
+        // routes
+        app.get('/', (req, res) => res.render('home'));
+        app.get('/smoothies', (req, res) => res.render('smoothies'));
+
+/////////////////////////////////////////////////////////////////////////////////
+In home.ejs
+    <%- include('partials/header'); -%>
+
+    <header>
+      <div class="smoothie">
+        <img src="/smoothie.png" alt="">
+      </div>
+      <div class="headings">
+        <h2>Smoothie Recipes</h2>
+        <h3>By Ninjas For Ninjas</h3>
+        <a href="/smoothies" class="btn">View Recipes</a>
+      </div>
+    </header>
+
+////////////////////////////////////////////////////////////////////
+In smoothie.ejs
+    <%- include('partials/header'); -%>
+
+<ul class="recipes">
+  <li class="recipe">
+    <img src="/smoothie.png" alt="smoothie recipe icon">
+    <h4>Banana Boost</h4>
+    <p>Banana, Vanilla ice cream, Milk</p>
+  </li>
+  <li class="recipe">
+    <img src="/smoothie.png" alt="smoothie recipe icon">
+    <h4>Tropical Twist</h4>
+    <p>Peach, Pinapple, Apple juice</p>
+  </li>
+  <li class="recipe">
+    <img src="/smoothie.png" alt="smoothie recipe icon">
+    <h4>Protein Packer</h4>
+    <p>Oats, Peanut butter, Milk, Banana, Blueberries</p>
+  </li>
+  <li class="recipe">
+    <img src="/smoothie.png" alt="smoothie recipe icon">
+    <h4>Banana Boost</h4>
+    <p>Banana, Vanilla ice cream, Milk</p>
+  </li>
+  <li class="recipe">
+    <img src="/smoothie.png" alt="smoothie recipe icon">
+    <h4>Tropical Twist</h4>
+    <p>Peach, Pinapple, Apple juice</p>
+  </li>
+  <li class="recipe">
+    <img src="/smoothie.png" alt="smoothie recipe icon">
+    <h4>Protein Packer</h4>
+    <p>Oats, Peanut butter, Milk, Banana, Blueberries</p>
+  </li>
+</ul>
+
+<%- include('partials/footer'); -%>
+/////////////////////////////////////////////////////////////////
+
+Using header and footer as partials for this ref github link.

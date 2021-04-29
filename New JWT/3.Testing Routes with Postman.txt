@@ -1,0 +1,8 @@
+                    3.Testing Routes with PostMan
+
+Testing all the Routes with PostMan
+
+To check the post Routes
+select Body in PostMan
+select raw
+select JSON from the dropdown.
